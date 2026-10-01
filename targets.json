@@ -1,0 +1,9 @@
+{
+  "timeout_ms": 3000,
+  "targets": [
+    { "name": "google",       "host": "google.com",         "port": 443 },
+    { "name": "tolamise",     "host": "tolamise.com",       "port": 443 },
+    { "name": "closed-port",  "host": "google.com",         "port": 81  },
+    { "name": "fake-domain",  "host": "no-such-host.invalid", "port": 443 }
+  ]
+}
