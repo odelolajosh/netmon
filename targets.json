@@ -1,5 +1,5 @@
 {
-  "timeout_ms": 3000,
+  "timeout_ms": 10000,
   "targets": [
     { "name": "google",       "host": "google.com",         "port": 443 },
     { "name": "tolamise",     "host": "tolamise.com",       "port": 443 },

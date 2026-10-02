@@ -9,13 +9,19 @@ import (
 type Report struct {
 	Target      Target
 	Results     []CheckResult
+	Ping        CheckResult
 	FailedLayer string // "" if everything passed
 }
 
-// probe checks a target layer by layer: DNS -> TCP -> HTTP.
-// Each layer depends on the one below it, so we stop at the first
-// failure. The failed layer tells us WHERE the problem is.
+// probe runs the layered checks, then ping. Ping always runs, even if
+// an earlier layer failed, but it never affects FailedLayer.
 func probe(ctx context.Context, t Target, timeout time.Duration) Report {
+	rep := probeLayers(ctx, t, timeout)
+	rep.Ping = checkPing(ctx, t.Host, timeout)
+	return rep
+}
+
+func probeLayers(ctx context.Context, t Target, timeout time.Duration) Report {
 	rep := Report{Target: t}
 
 	dns, addrs := checkDNS(ctx, t.Host, timeout)
@@ -32,13 +38,12 @@ func probe(ctx context.Context, t Target, timeout time.Duration) Report {
 		return rep
 	}
 
-	// TODO(day 1): once checkHTTP is written, uncomment:
-	// http := checkHTTP(t.Host, t.Port, timeout)
-	// rep.Results = append(rep.Results, http)
-	// if !http.OK {
-	// 	rep.FailedLayer = "HTTP"
-	// 	return rep
-	// }
+	http := checkHTTP(t.Host, t.Port, timeout)
+	rep.Results = append(rep.Results, http)
+	if !http.OK {
+		rep.FailedLayer = "HTTP"
+		return rep
+	}
 
 	return rep
 }
