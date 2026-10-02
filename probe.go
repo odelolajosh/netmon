@@ -11,6 +11,7 @@ type Report struct {
 	Results     []CheckResult
 	Ping        CheckResult
 	FailedLayer string // "" if everything passed
+	At          time.Time
 }
 
 // probe runs the layered checks, then ping. Ping always runs, even if
@@ -22,7 +23,7 @@ func probe(ctx context.Context, t Target, timeout time.Duration) Report {
 }
 
 func probeLayers(ctx context.Context, t Target, timeout time.Duration) Report {
-	rep := Report{Target: t}
+	rep := Report{Target: t, At: time.Now()}
 
 	dns, addrs := checkDNS(ctx, t.Host, timeout)
 	rep.Results = append(rep.Results, dns)

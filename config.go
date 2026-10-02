@@ -16,8 +16,9 @@ type Target struct {
 
 // Config is the whole targets.json file.
 type Config struct {
-	TimeoutMS int      `json:"timeout_ms"`
-	Targets   []Target `json:"targets"`
+	TimeoutMS     int      `json:"timeout_ms"`
+	FailThreshold int      `json:"fail_threshold"`
+	Targets       []Target `json:"targets"`
 }
 
 func (c Config) Timeout() time.Duration {
